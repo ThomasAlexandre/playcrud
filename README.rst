@@ -5,3 +5,41 @@ The application written in Scala aims at reverse-engineering any relational data
 This functionality is often very useful to get started quickly to use a new stack into an existing industrial application (since most of the legacy lies in the DB).
 The application has only external dependencies to the database jdbc connectors  (here mysql-connector library).
 It is inspired and built upon 2 already existing samples, one being the sample Computer-Database part of the Play Framework distribution (which exhibits a CRUD app but with Anorm), the other being a sample of usage of Slick done by `Typesafe's Slick Team <http://slick.typesafe.com/>`_ (the Coffee database with its Suppliers showing 1-to-many relationships).
+
+Requirements
+------------
+
+ - `sbt <https://github.com/harrah/xsbt>`_ 0.12.x
+ - play 2.1 (based on scala 2.10)
+
+
+Getting Started
+---------------
+
+In this tutorial 
+- the Source will be a very small MySql Database ( A DB containing 2 tables,  Suppliers and Coffees with a 1-to-many relation between them).
+- the Target will be a Play2 app running on localhost port 9000.
+
+
+Step 1 - Create a Play empty app (the target)
+---------------------------------------------
+
+In a directory of your choice, <target_basedir>, for example /tmp::
+
+> play new demo
+
+image:: doc/images/new_play_app.png
+
+>cd demo
+>play run
+Browse to http://localhost:9000 to make sure the play app is running
+
+
+Step 2 - Configuring and Running the generator
+----------------------------------------------
+Open a new command terminal, and go to the root of the cruplay project you have been cloning::
+
+> play
+> run 9090  (or any other port different from 9000, since the target app is running there)
+
+Browse to http://localhost:9090
