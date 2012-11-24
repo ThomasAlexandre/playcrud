@@ -28,7 +28,7 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 
 > play new demo
 
-image:: doc/images/new_play_app.png
+.. image:: doc/images/new_play_app.png
 
 >cd demo
 >play run
