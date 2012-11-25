@@ -1,0 +1,35 @@
+@(tables:List[String])
+@import utilities.StringUtil.camelify
+
+@entities = @{ tables.map(t=>camelify(t.toLowerCase)) }
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page (still here since default creation of new play project
+# creates an Application controller)
+GET     /                            controllers.Application.controllerlist
+
+@for(entity <- entities) {
+
+# @camelify(entity)
+
+# 
+# @camelify(entity) list (look at the default values for pagination parameters)
+GET     /@{entity.toLowerCase}               controllers.@{entity}Controller.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
+
+# Add @{entity.toLowerCase}
+GET     /@{entity.toLowerCase}/new           controllers.@{entity}Controller.create
+POST    /@{entity.toLowerCase}               controllers.@{entity}Controller.save
+
+# Edit existing @{entity.toLowerCase}
+GET     /@{entity.toLowerCase}/:id           controllers.@{entity}Controller.edit(id:Int)
+POST    /@{entity.toLowerCase}/:id           controllers.@{entity}Controller.update(id:Int)
+
+# Delete @{entity.toLowerCase}
+POST    /@{entity.toLowerCase}/:id/delete    controllers.@{entity}Controller.delete(id:Int)
+}
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                        controllers.Assets.at(path="/public", file)

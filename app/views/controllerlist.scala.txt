@@ -1,0 +1,22 @@
+@(tables:List[String])
+@import utilities.StringUtil.camelifyMethod
+@import utilities.StringUtil.camelify
+@@main("Welcome to Play 2.0") {
+    
+    <h1>List of Controllers</h1>
+        
+        <table class="computers zebra-striped">
+            <thead>
+                <tr>Controller Name</tr>
+            </thead>
+            <tbody>
+               @for(table <- tables) {
+                  <tr>
+                    <a class="btn success" href="@@routes.@{camelify(table.toLowerCase)}Controller.list()">@{camelify(table.toLowerCase)}</a>
+                  </tr>
+                }
+            </tbody>
+        </table>
+    
+    
+}

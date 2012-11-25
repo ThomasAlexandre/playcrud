@@ -1,0 +1,6 @@
+@(tables:List[String])
+@import utilities.StringUtil.camelify
+# Messages
+@for(table <- tables) {
+@{camelify(table).toLowerCase}.list.title={0,choice,0#No @{camelify(table).toLowerCase}|1#One item|1<{0,number,integer} @{camelify(table).toLowerCase}} found
+}

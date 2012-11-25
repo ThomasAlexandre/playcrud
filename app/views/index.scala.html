@@ -1,0 +1,41 @@
+@(dbForm: Form[(String,String,String,String)])
+
+@import helper._
+
+@main(title = "The 'CRUD generator' application") {
+
+    <h1>Enter Info about your existing database:</h1>
+
+    @form(action = routes.Application.generateAll, args = 'id -> "dbform") {
+        
+        @select(
+            field = dbForm("driver"), 
+            options = options(
+                "com.mysql.jdbc.Driver" -> "MySQL",
+                "org.apache.derby.jdbc.ClientDriver" -> "Derby"
+            ),
+            args = '_label -> "Choose a DB"
+        )
+        
+        @inputText(
+            field = dbForm("dburl"),
+            args = '_label -> "Database url", 'placeholder -> "jdbc:mysql://localhost:3306/slick"
+        )
+
+        @inputText(
+            field = dbForm("username"),
+            args = '_label -> "DB username", 'size -> 10, 'placeholder -> "root"
+        )
+        
+        @inputText(
+            field = dbForm("password"),
+            args = '_label -> "DB password", 'size -> 10, 'placeholder -> "root"
+        )
+
+        <p class="buttons">
+            <input type="submit" id="submit">
+        <p>
+
+    }
+
+}

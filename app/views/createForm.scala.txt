@@ -1,0 +1,30 @@
+@(table:String, entity:String, properties:List[utilities.TableProperty])
+@import utilities.StringUtil.camelifyMethod
+@import utilities.StringUtil.camelify
+@@(@{camelifyMethod(entity)}Form: Form[@{entity}])
+
+@@import helper._
+
+@@implicitFieldConstructor = @@{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@@main("Welcome to Play 2.0") {
+    
+    <h1>Add a @{entity}</h1>
+    
+    @@form(routes.@{camelify(table.toLowerCase)}Controller.save()) {
+        
+        <fieldset>
+          @for(property <- properties) {
+            @@inputText(@{camelifyMethod(entity)}Form("@{property.name}"), '_label -> "@{camelify(property.name)}")
+          } 
+
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Create this @{entity}" class="btn primary"> or 
+            <a href="@@routes.@{camelify(table.toLowerCase)}Controller.list()" class="btn">Cancel</a> 
+        </div>
+        
+    }
+    
+}
