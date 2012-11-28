@@ -40,8 +40,9 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 
 .. image:: doc/images/new_play_app.png
 
-:: > cd demo
-:: > play run
+Go into the newly created directory and run the app on default port:: 
+> cd demo
+> play run
 Browse to http://localhost:9000 to make sure the play app is running
 
 
@@ -53,3 +54,16 @@ Open a new command terminal, and go to the root of the cruplay project you have 
 > run 9090  (or any other port different from 9000, since the target app is running there)
 
 Browse to http://localhost:9090
+
+Fill out the form with your source DB information (currently only MySQL is supported)
+
+Et voila, if the code generation goes well, you will be redirected to the target app in the end
+(Note: The first time you run the generator, since Build.scala will be updated on the target project, you will to restart that target project
+(CTRL-C, then play run again )).
+
+
+Some current limitations and issues:
+- The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ),
+  might be possible to fix with some more thinking :-)
+- Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit)
+- Tables having more than one foreign key will not generate correct output (also ongoing)
