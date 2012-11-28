@@ -19,7 +19,7 @@ Getting Started
 
 In this tutorial 
 - the Source will be a very small MySql Database ( A DB containing 2 tables,  Suppliers and Coffees with a 1-to-many relation between them).
-- the Target will be a Play2 app running on localhost port 9000.
+- the Target will be a Play2 app running on localhost port 9000 (with an in-memory H2 database)
 
 Step 1 - Install a sample Database (the source)
 -----------------------------------------------
@@ -63,7 +63,9 @@ Et voila, if the code generation goes well, you will be redirected to the target
 
 
 Some current limitations and issues:
-- The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ),
-  might be possible to fix with some more thinking :-)
+- The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
 - Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit)
 - Tables having more than one foreign key will not generate correct output (also ongoing)
+
+
+  NOTE: If you just want to see what the result of the code generation should be similar to, take a look at my reference sample at https://github.com/ThomasAlexandre/slickcrudsample.git
