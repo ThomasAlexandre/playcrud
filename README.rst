@@ -62,10 +62,11 @@ Et voila, if the code generation goes well, you will be redirected to the target
 (CTRL-C, then play run again )).
 
 
-Some current limitations and issues:
-- The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
-- Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit)
-- Tables having more than one foreign key will not generate correct output (also ongoing)
+Some current limitations and issues::
+
+ - The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
+ - Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit)
+ - Tables having more than one foreign key will not generate correct output (also ongoing)
 
 
   NOTE: If you just want to see what the result of the code generation should be similar to, take a look at my reference sample at https://github.com/ThomasAlexandre/slickcrudsample.git
