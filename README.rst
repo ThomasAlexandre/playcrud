@@ -40,8 +40,8 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 
 .. image:: doc/images/new_play_app.png
 
->cd demo
->play run
+:: > cd demo
+:: > play run
 Browse to http://localhost:9000 to make sure the play app is running
 
 
