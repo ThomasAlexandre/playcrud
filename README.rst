@@ -11,6 +11,7 @@ Requirements
 
  - `sbt <https://github.com/harrah/xsbt>`_ 0.12.x
  - play 2.1 (based on scala 2.10)
+ - A jdbc DB engine (we use MySql in this prototype)
 
 
 Getting Started
@@ -20,22 +21,31 @@ In this tutorial
 - the Source will be a very small MySql Database ( A DB containing 2 tables,  Suppliers and Coffees with a 1-to-many relation between them).
 - the Target will be a Play2 app running on localhost port 9000.
 
+Step 1 - Install a sample Database (the source)
+-----------------------------------------------
 
-Step 1 - Create a Play empty app (the target)
+A sample database is available under ./sql/ , it is a mysql dump script called slick.sql
+Either open your favorite Graphical DB Tool , create a schema called [database_name] (e.g. 'slick') and run the script in it,
+or use mysqldump command utility::
+
+> mysql -u root -p[root_password] [database_name] < ./sql/slick.sql
+
+
+Step 2 - Create a Play empty app (the target)
 ---------------------------------------------
 
 In a directory of your choice, <target_basedir>, for example /tmp::
 
 > play new demo
 
-.. image:: playcrud/doc/images/new_play_app.png
+.. image:: doc/images/new_play_app.png
 
 >cd demo
 >play run
 Browse to http://localhost:9000 to make sure the play app is running
 
 
-Step 2 - Configuring and Running the generator
+Step 3 - Configuring and Running the generator
 ----------------------------------------------
 Open a new command terminal, and go to the root of the cruplay project you have been cloning::
 
