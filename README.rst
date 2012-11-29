@@ -41,6 +41,7 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 .. image:: doc/images/new_play_app.png
 
 Go into the newly created directory and run the app on default port:: 
+
 > cd demo
 > play run
 Browse to http://localhost:9000 to make sure the play app is running
@@ -48,7 +49,7 @@ Browse to http://localhost:9000 to make sure the play app is running
 
 Step 3 - Configuring and Running the generator
 ----------------------------------------------
-Open a new command terminal, and go to the root of the cruplay project you have been cloning::
+Open a new command terminal, and go to the root of this playcrud project (https://github.com/ThomasAlexandre/playcrud) you have been cloning::
 
 > play
 > run 9090  (or any other port different from 9000, since the target app is running there)
@@ -62,12 +63,15 @@ Et voila, if the code generation goes well, you will be redirected to the target
 (CTRL-C, then play run again )).
 
 
-Some current limitations and known issues::
+Some current limitations and known issues:
 
- - The database properties that you enter in the form are currently overriden by a case class Config (class Config.scala in the utilities package), so put your db info there if you are not running the sample with default slick coffee db.
- - The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
- - Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit). Since in this sample the global.scala.txt template include some static lines for importing a few coffees and suppliers, just comment out those lines if you intend to run the generation on a different database than the provided default.
- - Tables having more than one foreign key will not generate correct output (also ongoing)
+- The database properties that you enter in the form are currently overriden by a case class Config (class Config.scala in the utilities package), so put your db info there if you are not running the sample with default slick coffee db.
+
+- The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
+
+- Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit). Since in this sample the global.scala.txt template include some static lines for importing a few coffees and suppliers, just comment out those lines if you intend to run the generation on a different database than the provided default.
+
+- Tables having more than one foreign key will not generate correct output (also ongoing)
 
 
 NOTE:
