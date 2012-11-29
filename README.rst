@@ -41,6 +41,7 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 .. image:: doc/images/new_play_app.png
 
 Go into the newly created directory and run the app on default port:: 
+
 > cd demo
 > play run
 Browse to http://localhost:9000 to make sure the play app is running
@@ -48,7 +49,7 @@ Browse to http://localhost:9000 to make sure the play app is running
 
 Step 3 - Configuring and Running the generator
 ----------------------------------------------
-Open a new command terminal, and go to the root of the cruplay project you have been cloning::
+Open a new command terminal, and go to the root of this playcrud project (https://github.com/ThomasAlexandre/playcrud) you have been cloning::
 
 > play
 > run 9090  (or any other port different from 9000, since the target app is running there)
