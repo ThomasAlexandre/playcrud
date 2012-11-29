@@ -38,7 +38,7 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 
 > play new demo
 
-.. image:: doc/images/new_play_app.png
+.. |new play application screenshot| image:: doc/images/new_play_app.png
 
 Go into the newly created directory and run the app on default port:: 
 
