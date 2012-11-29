@@ -11,6 +11,7 @@ Requirements
 
  - `sbt <https://github.com/harrah/xsbt>`_ 0.12.x
  - play 2.1 (based on scala 2.10)
+ - A jdbc DB engine (we use MySql in this prototype)
 
 
 Getting Started
@@ -18,24 +19,34 @@ Getting Started
 
 In this tutorial 
 - the Source will be a very small MySql Database ( A DB containing 2 tables,  Suppliers and Coffees with a 1-to-many relation between them).
-- the Target will be a Play2 app running on localhost port 9000.
+- the Target will be a Play2 app running on localhost port 9000 (with an in-memory H2 database)
+
+Step 1 - Install a sample Database (the source)
+-----------------------------------------------
+
+A sample database is available under ./sql/ , it is a mysql dump script called slick.sql
+Either open your favorite Graphical DB Tool , create a schema called [database_name] (e.g. 'slick') and run the script in it,
+or use mysqldump command utility::
+
+> mysql -u root -p[root_password] [database_name] < ./sql/slick.sql
 
 
-Step 1 - Create a Play empty app (the target)
+Step 2 - Create a Play empty app (the target)
 ---------------------------------------------
 
 In a directory of your choice, <target_basedir>, for example /tmp::
 
 > play new demo
 
-.. image:: playcrud/doc/images/new_play_app.png
+.. image:: doc/images/new_play_app.png
 
->cd demo
->play run
+Go into the newly created directory and run the app on default port:: 
+> cd demo
+> play run
 Browse to http://localhost:9000 to make sure the play app is running
 
 
-Step 2 - Configuring and Running the generator
+Step 3 - Configuring and Running the generator
 ----------------------------------------------
 Open a new command terminal, and go to the root of the cruplay project you have been cloning::
 
@@ -43,3 +54,22 @@ Open a new command terminal, and go to the root of the cruplay project you have 
 > run 9090  (or any other port different from 9000, since the target app is running there)
 
 Browse to http://localhost:9090
+
+Fill out the form with your source DB information (currently only MySQL is supported)
+
+Et voila, if the code generation goes well, you will be redirected to the target app in the end
+(Note: The first time you run the generator, since Build.scala will be updated on the target project, you will to restart that target project
+(CTRL-C, then play run again )).
+
+
+Some current limitations and known issues::
+
+ - The database properties that you enter in the form are currently overriden by a case class Config (class Config.scala in the utilities package), so put your db info there if you are not running the sample with default slick coffee db.
+ - The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
+ - Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit). Since in this sample the global.scala.txt template include some static lines for importing a few coffees and suppliers, just comment out those lines if you intend to run the generation on a different database than the provided default.
+ - Tables having more than one foreign key will not generate correct output (also ongoing)
+
+
+NOTE:
+----
+If you just want to see what the result of the code generation should be similar to, take a look at my reference sample at https://github.com/ThomasAlexandre/slickcrudsample.git
