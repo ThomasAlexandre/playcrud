@@ -10,3 +10,10 @@ case class Config(
   username: String = "root",
   password: String = "root",
   baseDirectory: String = "/tmp/demo")
+  
+//case class Config(
+//  driver: String = "org.h2.Driver",
+//  dburl: String = "jdbc:h2:mem:devDb",
+//  username: String = "sa",
+//  password: String = "",
+//  baseDirectory: String = "/tmp/grailsdemo")

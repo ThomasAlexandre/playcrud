@@ -44,12 +44,12 @@ object Application extends Controller {
         case (driver, dburl, username, password) =>
 
           val allProperties = dbReader.getProperties()
-          println("properties: " + allProperties)
+          Logger.info("properties: " + allProperties)
 
           // val tablenames = allProperties.keys
           val tablenames = dbReader.getTables().keys
 
-          println("tablenames: " + tablenames)
+          Logger.info("tablenames: " + tablenames)
 
           // Generate pages concerning the whole application
           // List of pairs of (filepath info, output as text)
@@ -74,7 +74,7 @@ object Application extends Controller {
             
             // if the directory does not exist, create it
             if (!theDir.exists()) {
-              System.out.println("creating directory: " + fileDirectory)
+              Logger.info("creating directory: " + fileDirectory)
               theDir.mkdir()
               }
             } 
@@ -95,7 +95,7 @@ object Application extends Controller {
                 out.write(output)
               } catch {
                 case e: Exception => {
-                  println("Failed to write file: " + e.getStackTrace)
+                  Logger.info("Failed to write file: " + e.getStackTrace)
                 }
               } finally {
                 out.close()
@@ -108,7 +108,7 @@ object Application extends Controller {
           // Generate a domain entity and a controller for each table, as well as several views
           val artifacts = tablenames map { tablename =>
             val primaryKeys = dbReader.getPrimaryKeys(tablename)
-            println("primary keys: " + primaryKeys)
+            Logger.info("primary keys: " + primaryKeys)
 
             val foreignKeys = dbReader.getForeignKeys(tablename)
 
@@ -132,7 +132,7 @@ object Application extends Controller {
                 isForeignKey = isFK,
                 fKeyInfo = if (isFK) foreignKeys(prop(3).toString).head else Vector.empty)
             }
-            println(tablename + " tableProps: " + tableProps)
+            Logger.info(tablename + " tableProps: " + tableProps)
 
             def assignEntityNameFromTableName(tablename: String): String = {
               camelify(tablename.reverse.tail.reverse.toLowerCase)
