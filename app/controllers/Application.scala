@@ -12,8 +12,7 @@ import java.io.{ File, FileWriter }
 
 object Application extends Controller {
 
-  val config = Config()
-  val dbReader = new DBReader(config)
+ 
 
   /**
    * Describes the hello form.
@@ -42,6 +41,9 @@ object Application extends Controller {
       formWithErrors => BadRequest(html.index(formWithErrors)),
       {
         case (driver, dburl, username, password) =>
+          
+          val config = Config(driver=driver,dburl=dburl,username=username,password=password)
+          val dbReader = new DBReader(config)
 
           val allProperties = dbReader.getProperties()
           Logger.info("properties: " + allProperties)
