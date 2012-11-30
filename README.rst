@@ -38,7 +38,7 @@ In a directory of your choice, <target_basedir>, for example /tmp::
 
 > play new demo
 
-.. image:: doc/images/new_play_app.png
+.. |new play application screenshot| image:: doc/images/new_play_app.png
 
 Go into the newly created directory and run the app on default port:: 
 
@@ -77,3 +77,15 @@ Some current limitations and known issues:
 NOTE:
 ----
 If you just want to see what the result of the code generation should be similar to, take a look at my reference sample at https://github.com/ThomasAlexandre/slickcrudsample.git
+
+
+High-level design and architecture:
+-----------------------------------
+The play CRUD app generator is itself a Play application, where a controller invoked when submitting information about the source database is:
+
+1. Reading Metadata from the database to extract Tables with their properties, Primary Keys, Foreign Keys and some table content. This metadata extraction uses the scala type inference to retrieve column types and their content. The core of this mechanism is located in the DBUtil.scala and DBReader.scala classes and is very isolated from the targeted framework.
+
+2. Binding the extracted knowledge to Play Scala Templates so that the generation part can be consistent with Play's mechanism for generating views.
+
+3. The CRUD methods (Create Read Update Delete) should not be directly embedded in the model objects but rather at the controller level (ideally the repository level in DDD thinking) to avoid the anemic domain model pattern (Martin Fowler).
+
