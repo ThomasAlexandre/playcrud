@@ -52,6 +52,10 @@ object Application extends Controller {
           val tablenames = dbReader.getTables().keys
 
           Logger.info("tablenames: " + tablenames)
+          
+          // Exporting db testdata to test/resources
+          // The testdata is sorted so that foreign key dependencies are resolved
+          // tablenames.foreach(tablename => dbReader.saveTestData("/test/resources/testdata"+tablename+".xml",tablename))
 
           // Generate pages concerning the whole application
           // List of pairs of (filepath info, output as text)
@@ -69,17 +73,6 @@ object Application extends Controller {
             "/project/plugins.sbt" -> txt.plugins(tablenames.toList).toString,
             "/public/stylesheets/bootstrap.min.css" -> txt.bootstrapmincss(tablenames.toList).toString,
             "/public/stylesheets/main.css" -> txt.maincss(tablenames.toList).toString)
-
-           def createDirectoryIfNeeded(filePath:String): Unit = {
-            val fileDirectory = filePath.split("/").reverse.tail.reverse.mkString("/")
-            val theDir = new File(fileDirectory)
-            
-            // if the directory does not exist, create it
-            if (!theDir.exists()) {
-              Logger.info("creating directory: " + fileDirectory)
-              theDir.mkdir()
-              }
-            } 
             
           /**
            * Help method to write artifacts to a file on disk.
@@ -91,7 +84,7 @@ object Application extends Controller {
               (filepath, output) <- files
             ) yield {
               val absoluteFilename = outputDirectory + filepath      
-              createDirectoryIfNeeded(absoluteFilename)
+              dbReader.createDirectoryIfNeeded(absoluteFilename)
               val out = new FileWriter(outputDirectory + filepath)
               try {
                 out.write(output)
