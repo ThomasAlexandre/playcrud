@@ -13,7 +13,7 @@ import java.io.{ File, FileWriter }
 object Application extends Controller {
   
   /**
-   * Describes the hello form.
+   * Describes the db form.
    */
   val dbForm = Form(
     tuple(

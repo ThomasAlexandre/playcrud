@@ -29,18 +29,18 @@ object Global extends GlobalSettings {
 
       // Insert some suppliers (comment out these lines if you are using a different DB
       // TODO: Import testdata with DBUnit
-      //Suppliers.insertAll(
-      //Supplier(Some(101),101, "Acme, Inc.", "99 Market Street", "Groundsville", "CA", "95199"),
-      //Supplier(Some(49),49, "Superior Coffee", "1 Party Place", "Mendocino", "CA", "95460"),
-      //Supplier(Some(150),150, "The High Ground", "100 Coffee Lane", "Meadows", "CA", "93966"))
+      Suppliers.insertAll(
+      Supplier(Some(101), "Acme, Inc.", "99 Market Street", "Groundsville", "CA", "95199"),
+      Supplier(Some(49), "Superior Coffee", "1 Party Place", "Mendocino", "CA", "95460"),
+      Supplier(Some(150), "The High Ground", "100 Coffee Lane", "Meadows", "CA", "93966"))
 
       // Insert some coffees (using JDBC's batch insert feature, if supported by the DB)
-      //Coffees.insertAll(
-      //Coffee(Some(1),"Colombian", 101, 799, 0, 0),
-      //Coffee(Some(2),"French_Roast", 49, 899, 0, 0),
-      //Coffee(Some(3),"Espresso", 150, 999, 0, 0),
-      //Coffee(Some(4),"Colombian_Decaf", 101, 899, 0, 0),
-      //Coffee(Some(5),"French_Roast_Decaf", 49, 999, 0, 0))
+      Coffees.insertAll(
+      Coffee(Some("Colombian"), 101, 799, 0, 0),
+      Coffee(Some("French_Roast"), 49, 899, 0, 0),
+      Coffee(Some("Espresso"), 150, 999, 0, 0),
+      Coffee(Some("Colombian_Decaf"), 101, 899, 0, 0),
+      Coffee(Some("French_Roast_Decaf"), 49, 999, 0, 0))
     }
   }
 }

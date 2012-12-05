@@ -95,6 +95,9 @@ class DBReader(val config: Config) extends Logged {
     }
   }
 
+  /**
+   * The testdata is saved on disk so that it can be used by unit tests.
+   */
   def saveTestData(filepath: String, dependency: Array[String]): List[NodeSeq] = {
     val connection = new DatabaseConnection(conn)
     val depTableNames = TablesDependencyHelper.getAllDependentTables(connection, dependency)
@@ -106,11 +109,7 @@ class DBReader(val config: Config) extends Logged {
     // Load the saved testdata
     val datafile = XML.load("/tmp/demo/test/resources/testdata.xml")  
 
-    val testdata = depTableNames map { tablename =>
-      datafile \ tablename
-    }
-    log("Testdata: "+testdata)
-    testdata.toList
+    depTableNames.map(tablename => datafile \ tablename).toList
   }
 
   /*
