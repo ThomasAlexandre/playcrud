@@ -1,7 +1,6 @@
 @(table:String, entity:String, properties:List[utilities.TableProperty])
 @import utilities.StringUtil.camelifyMethod
 @import utilities.StringUtil.camelify
-@primarykey = @{properties.find(p=>p.isPrimaryKey).get}
 @@(currentPage: Page[@{entity}], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash)
 
 @@****************************************
@@ -61,7 +60,7 @@
                         <tr>
                             @for(property <- properties) {
                             <td>
-                            @if(property.isPrimaryKey){<a href="@@routes.@{camelify(table.toLowerCase)}Controller.edit(entity.@{primarykey.name}.get)">@@entity.@{primarykey.name}</a>}else{@@entity.@{property.name}} 
+                            @if(property.isPrimaryKey){<a href="@@routes.@{camelify(table.toLowerCase)}Controller.edit(entity.@{property.name}.get)">@@entity.@{property.name}</a>}else{@@entity.@{property.name}} 
                             </td> 
                             }
                         </tr>
