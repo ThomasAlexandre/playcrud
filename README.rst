@@ -65,8 +65,6 @@ Et voila, if the code generation goes well, you will be redirected to the target
 
 Some current limitations and known issues:
 
-- The database properties that you enter in the form are currently overriden by a case class Config (class Config.scala in the utilities package), so put your db info there if you are not running the sample with default slick coffee db.
-
 - The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
 
 - Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit). Since in this sample the global.scala.txt template include some static lines for importing a few coffees and suppliers, just comment out those lines if you intend to run the generation on a different database than the provided default.
