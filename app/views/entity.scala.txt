@@ -8,7 +8,8 @@
 @formatType(p:utilities.TableProperty) = @{
     "get[%s](\"%s.%s\")".format(p.formattedType,camelifyMethod(entity),p.name)
 }
-@projection = @{properties.map(_.name).mkString(" ~ ")}
+@projection = @{properties.map(p=>if(p.isPrimaryKey){p.name+".?"}else p.name).mkString(" ~ ")}
+@primarykey = @{properties.find(p=>p.isPrimaryKey).get}
 package models
 
 import play.api.db._
@@ -18,20 +19,20 @@ import java.util.Date
 import scala.slick.driver.H2Driver.simple._
 import scala.reflect.runtime.universe._
 
-case class @{entity}(id:Option[Int], @{properties.map(p => formatProp(p)).mkString(", ")})
+case class @{entity}(@{properties.map(p => formatProp(p)).mkString(", ")})
 
 // Definition of the @entity table
 object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
 
-  def id = column[Int]("ID", O.PrimaryKey, O AutoInc) // This is the primary key column
+  //def id = column[Int]("ID", O.PrimaryKey, O AutoInc) // This is the primary key column
   
   @for(property <- properties) {
-  def @{property.name} = column[@{property.propertyType}]("@{property.dbColumnName}") 
-  @if(property.isForeignKey) {def @{property.name}Entity = foreignKey("@{property.fKeyInfo(11)}", @{property.name}, @{camelify(property.fKeyInfo(2).toLowerCase)})(_.id)}
+  def @{property.name} = column[@{property.propertyType}]("@{property.dbColumnName+"\""+{if(property.isPrimaryKey)", O.PrimaryKey" else ""}}) 
+  @if(property.isForeignKey) {// def @{property.name}Entity = foreignKey("@{property.fKeyInfo(11)}", @{property.name}, @{camelify(property.fKeyInfo(2).toLowerCase)})(_.id)}
   }  
   
-  def * = id.? ~ @projection <> (@{entity}.apply _, @{entity}.unapply _)
-  def autoInc = id.? ~ @projection <> (@{entity}.apply _, @{entity}.unapply _) returning id 
+  def * = @projection <> (@{entity}.apply _, @{entity}.unapply _)
+  //def autoInc = id.? ~ @projection <> (@{entity}.apply _, @{entity}.unapply _) returning id 
   
   //def supplier = foreignKey("SUP_FK", supID, Suppliers)(_.id)
 
@@ -46,16 +47,16 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
     val members = typeOf[@{entity}].members.filter(m => m.isTerm && !m.isMethod).toList
     val fields = members.map(_.name).reverse.zipWithIndex
     println("Fields of @{entity}: " + fields) // TODO: find a smart way to sort by a field in the next line.
-    findAll(filter).sortBy(_.id).drop(page * pageSize).take(pageSize)
+    findAll(filter).sortBy(_.@primarykey.name).drop(page * pageSize).take(pageSize)
   }
 
-  def findById(id: Int) =
-    for (entity <- @camelify(table.toLowerCase) if entity.id === id) yield entity
+  def findByPK(pk: @primarykey.propertyType) =
+    for (entity <- @camelify(table.toLowerCase) if entity.@primarykey.name === pk) yield entity
   
     
   /**
    * Construct the Map[String,String] needed to fill a select options set.
    */
-  def options = this.findAll().map(x => x.id -> x.id)
+  def options = this.findAll().map(x => x.@primarykey.name -> @primarykey.name)
 
 }

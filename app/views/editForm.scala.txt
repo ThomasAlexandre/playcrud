@@ -1,7 +1,8 @@
 @(table:String, entity:String, properties:List[utilities.TableProperty])
 @import utilities.StringUtil.camelifyMethod
 @import utilities.StringUtil.camelify
-@@(id: Int, @camelifyMethod(entity)Form: Form[@{entity}])
+@primarykey = @{properties.find(p=>p.isPrimaryKey).get}
+@@(pk: @primarykey.propertyType, @camelifyMethod(entity)Form: Form[@{entity}])
 
 @@import helper._
 
@@ -11,7 +12,7 @@
     
     <h1>Edit @{entity}</h1>
     
-    @@form(routes.@{camelify(table.toLowerCase)}Controller.update(id)) {
+    @@form(routes.@{camelify(table.toLowerCase)}Controller.update(pk)) {
     
         <fieldset>
           @for(property <- properties) {
@@ -27,7 +28,7 @@
         
     }
     
-    @@form(routes.@{camelify(table.toLowerCase)}Controller.delete(id), 'class -> "topRight") {
+    @@form(routes.@{camelify(table.toLowerCase)}Controller.delete(pk), 'class -> "topRight") {
         <input type="submit" value="Delete this @{entity}" class="btn danger">
     }
     

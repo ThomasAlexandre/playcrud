@@ -11,9 +11,7 @@ import StringUtil._
 import java.io.{ File, FileWriter }
 
 object Application extends Controller {
-
- 
-
+  
   /**
    * Describes the hello form.
    */
@@ -44,6 +42,7 @@ object Application extends Controller {
           
           val config = Config(driver=driver,dburl=dburl,username=username,password=password)
           val dbReader = new DBReader(config)
+          val testDataFilepath = config.baseDirectory+"/test/resources/testdata.xml"
 
           val allProperties = dbReader.getProperties()
           Logger.info("properties: " + allProperties)
@@ -55,24 +54,9 @@ object Application extends Controller {
           
           // Exporting db testdata to test/resources
           // The testdata is sorted so that foreign key dependencies are resolved
-          // tablenames.foreach(tablename => dbReader.saveTestData("/test/resources/testdata"+tablename+".xml",tablename))
-
-          // Generate pages concerning the whole application
-          // List of pairs of (filepath info, output as text)
-          lazy val filesFromPlayProject = List(
-            "/conf/routes" -> txt.routes(tablenames.toList).toString,
-            "/conf/application.conf" -> txt.conf(tablenames.toList).toString,
-            "/conf/messages" -> txt.messages(tablenames.toList).toString,
-            "/app/Global.scala" -> txt.global(tablenames.toList).toString,
-            "/app/models/AllModels.scala" -> txt.allmodels(tablenames.toList).toString,
-            "/app/controllers/Application.scala" -> txt.appli(tablenames.toList).toString,
-            "/app/views/twitterBootstrapInput.scala.html" -> txt.twitterBootstrapInput(tablenames.toList).toString,
-            "/app/views/main.scala.html" -> txt.main(tablenames.toList).toString,
-            "/app/views/controllerlist.scala.html" -> txt.controllerlist(tablenames.toList).toString,
-            "/project/Build.scala" -> txt.build(tablenames.toList,config.baseDirectory).toString,
-            "/project/plugins.sbt" -> txt.plugins(tablenames.toList).toString,
-            "/public/stylesheets/bootstrap.min.css" -> txt.bootstrapmincss(tablenames.toList).toString,
-            "/public/stylesheets/main.css" -> txt.maincss(tablenames.toList).toString)
+          val testdata = dbReader.saveTestData(testDataFilepath,tablenames.toArray)
+          
+          Logger.info("testdata: " + testdata)
             
           /**
            * Help method to write artifacts to a file on disk.
@@ -98,8 +82,6 @@ object Application extends Controller {
               absoluteFilename
             }
 
-          val generatedFiles = generate(filesFromPlayProject, config.baseDirectory)
-
           // Generate a domain entity and a controller for each table, as well as several views
           val artifacts = tablenames map { tablename =>
             val primaryKeys = dbReader.getPrimaryKeys(tablename)
@@ -109,7 +91,7 @@ object Application extends Controller {
 
             val tableProps = allProperties(tablename) map { prop =>
               val propertyName = camelifyMethod(prop(3).toString)
-              val isPK = primaryKeys.contains(propertyName)
+              val isPK = primaryKeys.contains(prop(3).toString)
               val isFK = foreignKeys.keys.toList.contains(prop(3).toString)
               val propType = DBUtil.mapping(prop(5).toString)
               TableProperty(
@@ -122,8 +104,8 @@ object Application extends Controller {
                 isPrimaryKey = isPK,
                 length = prop(6).toString.toInt,
                 dbColumnName = prop(3).toString,
-                formattedType = if (isPK) "Pk[" + propType + "]" else propType,
-                default = if (isPK) " = NotAssigned" else "",
+                formattedType = if (isPK) "Option[" + propType + "]" else propType,
+                default = "",  // not used in slick persistence.
                 isForeignKey = isFK,
                 fKeyInfo = if (isFK) foreignKeys(prop(3).toString).head else Vector.empty)
             }
@@ -143,10 +125,31 @@ object Application extends Controller {
               s"/app/views/${camelify(tablename).toLowerCase}/editForm.scala.html" -> txt.editForm(tablename, entityName, tableProps).toString())
 
             generate(mvcFromPlayProject, config.baseDirectory)
+            (tablename,tableProps)
           }
+          
           // temporary for testing
           // Ok("Number of generated mvc artifacts: " + artifacts.size + "\n" + artifacts.toString)
           
+          // Generate pages concerning the whole application
+          // List of pairs of (filepath info, output as text)
+          lazy val filesFromPlayProject = List(
+            "/conf/routes" -> txt.routes(artifacts.toList).toString,
+            "/conf/application.conf" -> txt.conf(tablenames.toList).toString,
+            "/conf/messages" -> txt.messages(tablenames.toList).toString,
+            "/app/Global.scala" -> txt.global(tablenames.toList).toString,
+            "/app/models/AllModels.scala" -> txt.allmodels(tablenames.toList).toString,
+            "/app/controllers/Application.scala" -> txt.appli(tablenames.toList).toString,
+            "/app/views/twitterBootstrapInput.scala.html" -> txt.twitterBootstrapInput(tablenames.toList).toString,
+            "/app/views/main.scala.html" -> txt.main(tablenames.toList).toString,
+            "/app/views/controllerlist.scala.html" -> txt.controllerlist(tablenames.toList).toString,
+            "/project/Build.scala" -> txt.build(tablenames.toList,config.baseDirectory).toString,
+            "/project/plugins.sbt" -> txt.plugins(tablenames.toList).toString,
+            "/public/stylesheets/bootstrap.min.css" -> txt.bootstrapmincss(tablenames.toList).toString,
+            "/public/stylesheets/main.css" -> txt.maincss(tablenames.toList).toString)
+            
+          val generatedFiles = generate(filesFromPlayProject, config.baseDirectory)
+             
           //This should redirect to the generated play app
           Redirect("http://localhost:9000")
       })

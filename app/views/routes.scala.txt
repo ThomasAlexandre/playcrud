@@ -1,7 +1,7 @@
-@(tables:List[String])
+@(artifacts:List[(String, List[utilities.TableProperty])])
 @import utilities.StringUtil.camelify
 
-@entities = @{ tables.map(t=>camelify(t.toLowerCase)) }
+@entities = @{ artifacts.map( a=>(camelify(a._1.toLowerCase),a._2.find(p=>p.isPrimaryKey).get) ) }
 
 # Routes
 # This file defines all application routes (Higher priority routes first)
@@ -11,7 +11,7 @@
 # creates an Application controller)
 GET     /                            controllers.Application.controllerlist
 
-@for(entity <- entities) {
+@for((entity,pk) <- entities) {
 
 # @camelify(entity)
 
@@ -24,11 +24,11 @@ GET     /@{entity.toLowerCase}/new           controllers.@{entity}Controller.cre
 POST    /@{entity.toLowerCase}               controllers.@{entity}Controller.save
 
 # Edit existing @{entity.toLowerCase}
-GET     /@{entity.toLowerCase}/:id           controllers.@{entity}Controller.edit(id:Int)
-POST    /@{entity.toLowerCase}/:id           controllers.@{entity}Controller.update(id:Int)
+GET     /@{entity.toLowerCase}/:pk           controllers.@{entity}Controller.edit(pk:@{pk.propertyType})
+POST    /@{entity.toLowerCase}/:pk           controllers.@{entity}Controller.update(pk:@{pk.propertyType})
 
 # Delete @{entity.toLowerCase}
-POST    /@{entity.toLowerCase}/:id/delete    controllers.@{entity}Controller.delete(id:Int)
+POST    /@{entity.toLowerCase}/:pk/delete    controllers.@{entity}Controller.delete(pk:@{pk.propertyType})
 }
 
 # Map static resources from the /public folder to the /assets URL path

@@ -14,6 +14,11 @@ import org.dbunit.database.search.TablesDependencyHelper
 import org.dbunit.database.DatabaseConnection
 import org.dbunit.dataset.xml.FlatXmlDataSet
 import java.io.File
+import scala.collection.JavaConversions._
+import java.io.FileInputStream
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder
+import org.dbunit.operation.DatabaseOperation
+import scala.xml._
 
 // Uses only 6 of all the 23 available property attributes
 case class TableProperty(
@@ -90,12 +95,38 @@ class DBReader(val config: Config) extends Logged {
     }
   }
 
-  def saveTestData(filepath: String, dependency: String): Unit = {
+  def saveTestData(filepath: String, dependency: Array[String]): List[NodeSeq] = {
     val connection = new DatabaseConnection(conn)
     val depTableNames = TablesDependencyHelper.getAllDependentTables(connection, dependency)
+    log("Dependent Table Names: " + depTableNames)
     val depDataset = connection.createDataSet(depTableNames)
-    createDirectoryIfNeeded(filepath);
-    FlatXmlDataSet.write(depDataset, new FileOutputStream(filepath));
+    createDirectoryIfNeeded(filepath)
+    FlatXmlDataSet.write(depDataset, new FileOutputStream(new File(filepath)))
+    
+    // Load the saved testdata
+    val datafile = XML.load("/tmp/demo/test/resources/testdata.xml")  
+
+    val testdata = depTableNames map { tablename =>
+      datafile \ tablename
+    }
+    log("Testdata: "+testdata)
+    testdata.toList
   }
+
+  /*
+  def loadTestData(filepath: String): Unit = {
+    val connection = new DatabaseConnection(conn)
+    val in = new FileInputStream(filepath)
+    try {
+      val data = new FlatXmlDataSetBuilder().build(in)
+      DatabaseOperation.CLEAN_INSERT.execute(connection, data)
+    } catch {
+      case e: Exception => log("Failed to read testdata file: " + e.getStackTrace)
+    } finally {
+      in.close()
+      connection.close()
+    }
+  }
+  */
 
 }

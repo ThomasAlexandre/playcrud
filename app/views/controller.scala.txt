@@ -2,7 +2,7 @@
 @import utilities.StringUtil.camelifyMethod
 @import utilities.StringUtil.camelify
 @import utilities.DBUtil.formMapping
-
+@primarykey = @{properties.find(p=>p.isPrimaryKey).get}
 package controllers
 
 import play.api._
@@ -45,7 +45,7 @@ object @{camelify(table.toLowerCase)}Controller extends Controller {
    */ 
   val form = Form(
     mapping(
-      "id" -> optional(number),
+      //"id" -> optional(number),
       @{properties.map{ p => "\"%s\" -> %s".format(p.name,formMapping(p)) }.mkString(",\n      ")}
     )(@{entity}.apply)(@{entity}.unapply)
   )
@@ -93,8 +93,8 @@ object @{camelify(table.toLowerCase)}Controller extends Controller {
       formWithErrors => BadRequest(html.@{camelify(table).toLowerCase}.createForm(formWithErrors)), // supplierSelect)),
       entity => {
         database withTransaction {
-          @{camelify(table.toLowerCase)}.autoInc.insert(entity)
-          Home.flashing("success" -> s"Entity ${entity.id} has been created")
+          @{camelify(table.toLowerCase)}.insert(entity)
+          Home.flashing("success" -> s"Entity ${entity} has been created")
         }
       })
   }
@@ -102,12 +102,12 @@ object @{camelify(table.toLowerCase)}Controller extends Controller {
   /**
    * Display the 'edit form' of an existing entity.
    *
-   * @@param id Id of the entity to edit
+   * @@param pk primary key of the entity to edit
    */
-  def edit(id: Int) = Action {
+  def edit(pk: @primarykey.propertyType) = Action {
     database withSession {
-      @{camelify(table.toLowerCase)}.findById(id).list.headOption match {
-        case Some(e) => Ok(html.@{camelify(table).toLowerCase}.editForm(id, form.fill(e))) //, supplierSelect))
+      @{camelify(table.toLowerCase)}.findByPK(pk).list.headOption match {
+        case Some(e) => Ok(html.@{camelify(table).toLowerCase}.editForm(pk, form.fill(e))) //, supplierSelect))
         case None => NotFound
       }
     }
@@ -116,16 +116,16 @@ object @{camelify(table.toLowerCase)}Controller extends Controller {
   /**
    * Handle the 'edit form' submission
    *
-   * @@param id Id of the entity to edit
+   * @@param pk primary key of the entity to edit
    */
-  def update(id: Int) = Action { implicit request =>
+  def update(pk: @primarykey.propertyType) = Action { implicit request =>
     database withSession {
       form.bindFromRequest.fold(
-        formWithErrors => BadRequest(html.@{camelify(table).toLowerCase}.editForm(id, formWithErrors)), // supplierSelect)),
+        formWithErrors => BadRequest(html.@{camelify(table).toLowerCase}.editForm(pk, formWithErrors)), // supplierSelect)),
         entity => {
-          Home.flashing(@{camelify(table.toLowerCase)}.findById(id).update(entity) match {
-            case 0 => "failure" -> s"Could not update entity ${entity.id}"
-            case _ => "success" -> s"Entity ${entity.id} has been updated"
+          Home.flashing(@{camelify(table.toLowerCase)}.findByPK(pk).update(entity) match {
+            case 0 => "failure" -> s"Could not update entity ${entity}"
+            case _ => "success" -> s"Entity ${entity} has been updated"
           })
         })
     }
@@ -134,9 +134,9 @@ object @{camelify(table.toLowerCase)}Controller extends Controller {
   /**
    * Handle entity deletion.
    */
-  def delete(id: Int) = Action {
+  def delete(pk: @primarykey.propertyType) = Action {
     database withSession {
-      Home.flashing(@{camelify(table.toLowerCase)}.findById(id).delete match {
+      Home.flashing(@{camelify(table.toLowerCase)}.findByPK(pk).delete match {
         case 0 => "failure" -> "Entity has Not been deleted"
         case x => "success" -> s"Entity has been deleted (deleted $x row(s))"
       })
