@@ -137,7 +137,7 @@ object Application extends Controller {
             "/conf/routes" -> txt.routes(artifacts.toList).toString,
             "/conf/application.conf" -> txt.conf(tablenames.toList).toString,
             "/conf/messages" -> txt.messages(tablenames.toList).toString,
-            "/app/Global.scala" -> txt.global(tablenames.toList).toString,
+            "/app/Global.scala" -> txt.global(tablenames.toList,artifacts.toList,testdata).toString,
             "/app/models/AllModels.scala" -> txt.allmodels(tablenames.toList).toString,
             "/app/controllers/Application.scala" -> txt.appli(tablenames.toList).toString,
             "/app/views/twitterBootstrapInput.scala.html" -> txt.twitterBootstrapInput(tablenames.toList).toString,

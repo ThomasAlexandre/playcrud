@@ -109,7 +109,13 @@ class DBReader(val config: Config) extends Logged {
     // Load the saved testdata
     val datafile = XML.load("/tmp/demo/test/resources/testdata.xml")  
 
-    depTableNames.map(tablename => datafile \ tablename).toList
+    val sortedTestdataNodes = depTableNames.map(tablename => datafile \ tablename).toList
+    
+    // TODO: convert xml NodeSeq for each table into a better format usable when 
+    // generating Global.scala. Example:
+    // 
+    
+    sortedTestdataNodes
   }
 
   /*
