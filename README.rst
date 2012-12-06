@@ -3,7 +3,7 @@ Reverse engineer a jdbc database into a scala Play 2 CRUD (Create Read Update De
 
 The application written in Scala aims at reverse-engineering any relational database (jdbc-based) into a CRUD Play Application targetting the Play 2.1 release (with Scala 2.10) and the Slick Query and DB Access Library. Since this is a prototype, the scope will be limited to demonstrate the conversion of a very small mysql database into a Play App running an H2 in-memory db.
 This functionality is often very useful to get started quickly to use a new stack into an existing industrial application (since most of the legacy lies in the DB).
-The application has only external dependencies to the database jdbc connectors  (here mysql-connector library).
+The application has only external dependencies to the database jdbc connectors  (here mysql-connector library) and dbunit (to extract testdata to be loaded on startup of the generated play app).
 It is inspired and built upon 2 already existing samples, one being the sample Computer-Database part of the Play Framework distribution (which exhibits a CRUD app but with Anorm), the other being a sample of usage of Slick done by `Typesafe's Slick Team <http://slick.typesafe.com/>`_ (the Coffee database with its Suppliers showing 1-to-many relationships).
 
 Requirements
@@ -67,8 +67,6 @@ Some current limitations and known issues:
 
 - The sorting of columns and filtering are not working automatically out of the box (since we do not know which column to filter on ), might be possible to fix with some more thinking :-)
 
-- Some content from the source database should be transfered to the target database automatically (ongoing, using DBUnit). Since in this sample the global.scala.txt template include some static lines for importing a few coffees and suppliers, just comment out those lines if you intend to run the generation on a different database than the provided default.
-
 - Tables having more than one foreign key will not generate correct output (also ongoing)
 
 
@@ -86,4 +84,6 @@ The play CRUD app generator is itself a Play application, where a controller inv
 2. Binding the extracted knowledge to Play Scala Templates so that the generation part can be consistent with Play's mechanism for generating views.
 
 3. The CRUD methods (Create Read Update Delete) should not be directly embedded in the model objects but rather at the controller level (ideally the repository level in DDD thinking) to avoid the anemic domain model pattern (Martin Fowler).
+
+4. Some testdata is extracted from the source and saved on disk, to be used on startup to load some content in the play app or as static data in unit tests. We use DBUnit for this since its API allows to sort dependencies on foreign keys to avoid problems when inserting the testdata in the target db.
 
