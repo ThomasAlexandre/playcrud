@@ -74,7 +74,7 @@ object DBUtil extends Logged {
       case "Long" => "longNumber"
       case "Int" => "number"
     }
-    if (property.isPrimaryKey) "optional(%s)".format(mapping)
+    if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
     else mapping
   }
 

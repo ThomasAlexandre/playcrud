@@ -6,7 +6,7 @@
     "%s : %s%s".format(p.name,p.formattedType,p.default)
 }
 @formatType(p:utilities.TableProperty) = @{
-    "get[%s](\"%s.%s\")".format(p.formattedType,camelifyMethod(entity),p.name)
+    if(p.nullable) "Option[%s]".format(p.propertyType) else p.propertyType
 }
 @projection = @{properties.map(p=>if(p.isPrimaryKey){p.name+".?"}else p.name).mkString(" ~ ")}
 @primarykey = @{properties.find(p=>p.isPrimaryKey).get}
@@ -27,7 +27,7 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
   //def id = column[Int]("ID", O.PrimaryKey, O AutoInc) // This is the primary key column
   
   @for(property <- properties) {
-  def @{property.name} = column[@{property.propertyType}]("@{property.dbColumnName+"\""+{if(property.isPrimaryKey)", O.PrimaryKey" else ""}}) 
+  def @{property.name} = column[@formatType(property)]("@{property.dbColumnName+"\""+{if(property.isPrimaryKey)", O.PrimaryKey" else ""}}) 
   @if(property.isForeignKey) {// def @{property.name}Entity = foreignKey("@{property.fKeyInfo(11)}", @{property.name}, @{camelify(property.fKeyInfo(2).toLowerCase)})(_.id)}
   }  
   

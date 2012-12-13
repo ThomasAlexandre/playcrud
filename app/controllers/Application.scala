@@ -90,20 +90,21 @@ object Application extends Controller {
 
             val tableProps = allProperties(tablename) map { prop =>
               val propertyName = checkName(camelifyMethod(prop(3).toString))
+              val isNullable = prop(17).toString match {
+                case "NO" => false
+                case "YES" => true
+                }
               val isPK = primaryKeys.contains(prop(3).toString)
               val isFK = foreignKeys.keys.toList.contains(prop(3).toString)
               val propType = DBUtil.mapping(prop(5).toString)
               TableProperty(
                 name = propertyName,
                 propertyType = propType,
-                nullable = prop(17).toString match {
-                  case "NO" => false
-                  case "YES" => true
-                },
+                nullable = isNullable,
                 isPrimaryKey = isPK,
                 length = prop(6).toString.toInt,
                 dbColumnName = prop(3).toString,
-                formattedType = if (isPK) "Option[" + propType + "]" else propType,
+                formattedType = if (isPK || isNullable) "Option[" + propType + "]" else propType,
                 default = "",  // not used in slick persistence.
                 isForeignKey = isFK,
                 fKeyInfo = if (isFK) foreignKeys(prop(3).toString).head else Vector.empty)

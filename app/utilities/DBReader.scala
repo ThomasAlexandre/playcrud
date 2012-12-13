@@ -108,7 +108,7 @@ class DBReader(val config: Config) extends Logged {
     FlatXmlDataSet.write(depDataset, new FileOutputStream(new File(filepath)))
     
     // Load the saved testdata
-    val datafile = XML.load("/tmp/demo/test/resources/testdata.xml")  
+    val datafile = XML.load(config.baseDirectory+"/test/resources/testdata.xml")  
 
     val sortedTestdataNodes = depTableNames.map(tablename => datafile \ tablename).toList
     

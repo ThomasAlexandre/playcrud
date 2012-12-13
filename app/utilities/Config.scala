@@ -9,7 +9,7 @@ case class Config(
   dburl: String = "jdbc:mysql://localhost:3306/slick",
   username: String = "root",
   password: String = "root",
-  baseDirectory: String = "/tmp/demo")
+  baseDirectory: String = "/Users/thomas/tmp/demo")
   
 //case class Config(
 //  driver: String = "org.h2.Driver",
