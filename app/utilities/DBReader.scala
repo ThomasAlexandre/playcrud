@@ -37,6 +37,7 @@ class DBReader(val config: Config) extends Logged {
 
   // Load the driver
   val driver = classOf[com.mysql.jdbc.Driver]
+  val h2Driver = classOf[org.h2.Driver]
 
   // Setup the connection
   val conn = DriverManager.getConnection(config.dburl, config.username, config.password)

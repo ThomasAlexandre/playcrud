@@ -12,6 +12,7 @@
             field = dbForm("driver"), 
             options = options(
                 "com.mysql.jdbc.Driver" -> "MySQL",
+                "org.h2.Driver" -> "H2",
                 "org.apache.derby.jdbc.ClientDriver" -> "Derby"
             ),
             args = '_label -> "Choose a DB"

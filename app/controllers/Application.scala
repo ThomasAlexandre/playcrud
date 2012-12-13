@@ -20,7 +20,7 @@ object Application extends Controller {
       "driver" -> nonEmptyText,
       "dburl" -> nonEmptyText,
       "username" -> nonEmptyText,
-      "password" -> nonEmptyText))
+      "password" -> text))
 
   // -- Actions
 
@@ -51,12 +51,6 @@ object Application extends Controller {
           val tablenames = dbReader.getTables().keys
 
           Logger.info("tablenames: " + tablenames)
-          
-          // Exporting db testdata to test/resources
-          // The testdata is sorted so that foreign key dependencies are resolved
-          val testdata = dbReader.saveTestData(testDataFilepath,tablenames.toArray)
-          
-          Logger.info("testdata: " + testdata)
             
           /**
            * Help method to write artifacts to a file on disk.
@@ -88,9 +82,14 @@ object Application extends Controller {
             Logger.info("primary keys: " + primaryKeys)
 
             val foreignKeys = dbReader.getForeignKeys(tablename)
+            
+            def checkName(input:String): String = input.toLowerCase() match {
+              case "type" | "class" => s"${input}1" // reserved words are rewritten with 1 at the end
+              case _ => input   // unchanged
+            }
 
             val tableProps = allProperties(tablename) map { prop =>
-              val propertyName = camelifyMethod(prop(3).toString)
+              val propertyName = checkName(camelifyMethod(prop(3).toString))
               val isPK = primaryKeys.contains(prop(3).toString)
               val isFK = foreignKeys.keys.toList.contains(prop(3).toString)
               val propType = DBUtil.mapping(prop(5).toString)
@@ -117,32 +116,42 @@ object Application extends Controller {
 
             val entityName = assignEntityNameFromTableName(tablename)
 
-            val mvcFromPlayProject: List[(String, String)] = List(
+            lazy val mvcFromPlayProject: List[(String, String)] = List(
               s"/app/models/${camelify(tablename.toLowerCase)}.scala" -> txt.entity(tablename, entityName, tableProps).toString,
               s"/app/controllers/${camelify(tablename.toLowerCase)}Controller.scala" -> txt.controller(tablename, entityName, tableProps).toString,
               s"/app/views/${camelify(tablename).toLowerCase}/createForm.scala.html" -> txt.createForm(tablename, entityName, tableProps).toString,
               s"/app/views/${camelify(tablename).toLowerCase}/list.scala.html" -> txt.list(tablename, entityName, tableProps).toString,
               s"/app/views/${camelify(tablename).toLowerCase}/editForm.scala.html" -> txt.editForm(tablename, entityName, tableProps).toString())
 
-            generate(mvcFromPlayProject, config.baseDirectory)
+            if(!tableProps.find(p=>p.isPrimaryKey).isEmpty) generate(mvcFromPlayProject, config.baseDirectory)
             (tablename,tableProps)
           }
           
-          // temporary for testing
-          // Ok("Number of generated mvc artifacts: " + artifacts.size + "\n" + artifacts.toString)
+          Logger.info("Total Number of Artifacts: "+artifacts.size)
+           
+          // Filter out tables with no primary key (for now)
+          val filteredArtifacts = artifacts filterNot(a=>a._2.find(p=>p.isPrimaryKey).isEmpty)
+          
+          Logger.info("Number of Filtered Artifacts (artifacts with a primary key): "+filteredArtifacts.size)
+          
+          // Exporting db testdata to test/resources
+          // The testdata is sorted so that foreign key dependencies are resolved
+          val testdata = dbReader.saveTestData(testDataFilepath,filteredArtifacts.map(_._1).toArray)
+          
+          Logger.info("testdata: " + testdata)
           
           // Generate pages concerning the whole application
           // List of pairs of (filepath info, output as text)
           lazy val filesFromPlayProject = List(
-            "/conf/routes" -> txt.routes(artifacts.toList).toString,
+            "/conf/routes" -> txt.routes(filteredArtifacts.toList).toString,
             "/conf/application.conf" -> txt.conf(tablenames.toList).toString,
             "/conf/messages" -> txt.messages(tablenames.toList).toString,
-            "/app/Global.scala" -> txt.global(tablenames.toList,artifacts.toList,testdata).toString,
+            "/app/Global.scala" -> txt.global(tablenames.toList,filteredArtifacts.toList,testdata).toString,
             "/app/models/AllModels.scala" -> txt.allmodels(tablenames.toList).toString,
             "/app/controllers/Application.scala" -> txt.appli(tablenames.toList).toString,
             "/app/views/twitterBootstrapInput.scala.html" -> txt.twitterBootstrapInput(tablenames.toList).toString,
             "/app/views/main.scala.html" -> txt.main(tablenames.toList).toString,
-            "/app/views/controllerlist.scala.html" -> txt.controllerlist(tablenames.toList).toString,
+            "/app/views/controllerlist.scala.html" -> txt.controllerlist(filteredArtifacts.toList).toString,
             "/project/Build.scala" -> txt.build(tablenames.toList,config.baseDirectory).toString,
             "/project/plugins.sbt" -> txt.plugins(tablenames.toList).toString,
             "/public/stylesheets/bootstrap.min.css" -> txt.bootstrapmincss(tablenames.toList).toString,

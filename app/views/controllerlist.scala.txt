@@ -1,4 +1,4 @@
-@(tables:List[String])
+@(artifacts:List[(String, List[utilities.TableProperty])])
 @import utilities.StringUtil.camelifyMethod
 @import utilities.StringUtil.camelify
 @@main("Welcome to Play 2.0") {
@@ -10,7 +10,7 @@
                 <tr>Controller Name</tr>
             </thead>
             <tbody>
-               @for(table <- tables) {
+               @for((table,props) <- artifacts) {
                   <tr>
                     <a class="btn success" href="@@routes.@{camelify(table.toLowerCase)}Controller.list()">@{camelify(table.toLowerCase)}</a>
                   </tr>

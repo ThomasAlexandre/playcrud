@@ -14,7 +14,7 @@ package models
 
 import play.api.db._
 import play.api.Play.current
-import java.util.Date
+import java.sql.Date
 
 import scala.slick.driver.H2Driver.simple._
 import scala.reflect.runtime.universe._

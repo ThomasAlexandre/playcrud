@@ -26,7 +26,7 @@ object Global extends GlobalSettings {
     database withSession {
     
       // Create the tables, including primary and foreign keys
-      val ddl = (@{tables.map(t => (camelify(t.toLowerCase))+".ddl").mkString(" ++ ")})
+      val ddl = (@{artifacts.map(t => (camelify(t._1.toLowerCase))+".ddl").mkString(" ++ ")})
 
       //ddl.drop
       ddl.create

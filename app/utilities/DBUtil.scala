@@ -69,12 +69,12 @@ object DBUtil extends Logged {
 
   def formMapping(property: TableProperty): String = {
     val mapping = property.propertyType match {
-      case "Date" | "Timestamp" => "date(\"yyyy-MM-dd\")"
+      case "Date" | "Timestamp" => "sqlDate(\"yyyy-MM-dd\")"
       case "String" => "nonEmptyText"
       case "Long" => "longNumber"
       case "Int" => "number"
     }
-    if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
+    if (property.isPrimaryKey) "optional(%s)".format(mapping)
     else mapping
   }
 
