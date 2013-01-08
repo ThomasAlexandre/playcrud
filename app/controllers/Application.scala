@@ -110,12 +110,8 @@ object Application extends Controller {
                 fKeyInfo = if (isFK) foreignKeys(prop(3).toString).head else Vector.empty)
             }
             Logger.info(tablename + " tableProps: " + tableProps)
-
-            def assignEntityNameFromTableName(tablename: String): String = {
-              camelify(tablename.reverse.tail.reverse.toLowerCase)
-            }
-
-            val entityName = assignEntityNameFromTableName(tablename)
+            
+            val entityName = DBUtil.nameMapping(tablename)
 
             lazy val mvcFromPlayProject: List[(String, String)] = List(
               s"/app/models/${camelify(tablename.toLowerCase)}.scala" -> txt.entity(tablename, entityName, tableProps).toString,

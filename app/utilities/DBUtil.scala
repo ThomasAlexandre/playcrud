@@ -77,5 +77,12 @@ object DBUtil extends Logged {
     if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
     else mapping
   }
-
+  
+  // Gives a chance to rename some tables in the migration
+  // Method that will rename eronate DB tablenames to entities with better meaningfull names
+  def nameMapping(tablename:String): String = {
+    val entityNames = utilities.EntityNames()
+    entityNames.getOrElse(tablename,camelify(tablename.reverse.tail.reverse.toLowerCase)) 
+  }
+  
 }
