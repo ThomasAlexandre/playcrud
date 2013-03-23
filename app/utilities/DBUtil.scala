@@ -58,6 +58,7 @@ object DBUtil extends Logged {
       case "INTEGER" | "INT" => "Int"
       case "DOUBLE" => "Int" // find right type (Double)
       case "DATE" => "Date"
+      case "DATETIME" => "Date"
       case "FLOAT" => "Double" // find right type (Float or Double)  
       case "REAL" => "Double" // find right type
       case "TIME" => "Time" // find right type (java.sql.Time)
@@ -69,10 +70,11 @@ object DBUtil extends Logged {
 
   def formMapping(property: TableProperty): String = {
     val mapping = property.propertyType match {
-      case "Date" | "Timestamp" => "sqlDate(\"yyyy-MM-dd\")"
+      case ("Date" | "Timestamp" | "DATETIME") => "sqlDate(\"yyyy-MM-dd\")"
       case "String" => "nonEmptyText"
       case "Long" => "longNumber"
       case "Int" => "number"
+      case "Boolean" => "boolean"
     }
     if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
     else mapping
@@ -82,7 +84,10 @@ object DBUtil extends Logged {
   // Method that will rename eronate DB tablenames to entities with better meaningfull names
   def nameMapping(tablename:String): String = {
     val entityNames = utilities.EntityNames()
-    entityNames.getOrElse(tablename,camelify(tablename.reverse.tail.reverse.toLowerCase)) 
+    entityNames.getOrElse(tablename,
+        camelify(tablename.reverse.tail.reverse.toLowerCase)
+        //"The"+camelify(tablename.toLowerCase)
+        ) 
   }
   
 }
