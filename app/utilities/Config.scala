@@ -6,7 +6,7 @@ package utilities
 
 case class Config(
   driver: String = "com.mysql.jdbc.Driver",
-  dburl: String = "jdbc:mysql://localhost:3306/slick",
+  dburl: String = "jdbc:mysql://localhost:3306/grails_ci",
   username: String = "root",
   password: String = "root",
   //baseDirectory: String = "/Users/thomas/projects/internal/stockapps")

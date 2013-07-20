@@ -27,7 +27,7 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
   //def id = column[Int]("ID", O.PrimaryKey, O AutoInc) // This is the primary key column
   
   @for(property <- properties) {
-  def @{property.name} = column[@formatType(property)]("@{property.dbColumnName+"\""+{if(property.isPrimaryKey)", O.PrimaryKey" else ""}}) 
+  def @{property.name} = column[@formatType(property)]("@{property.dbColumnName.toUpperCase+"\""+{if(property.isPrimaryKey)", O.PrimaryKey" else ""}}) 
   @if(property.isForeignKey) {// def @{property.name}Entity = foreignKey("@{property.fKeyInfo(11)}", @{property.name}, @{camelify(property.fKeyInfo(2).toLowerCase)})(_.id)}
   }  
   
