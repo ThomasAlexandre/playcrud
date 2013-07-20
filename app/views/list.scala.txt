@@ -52,7 +52,7 @@
             <thead>
                 <tr>
                     @for((property,i) <- properties zipWithIndex) { 
-                    @@header(@{i+2}, "@{camelify(property.name)}")}            
+                    @@header(@{i+1}, "@{camelify(property.name)}")}            
                 </tr>              
             </thead>
             <tbody>
