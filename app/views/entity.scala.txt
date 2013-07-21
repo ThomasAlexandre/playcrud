@@ -34,8 +34,6 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
   
   def * = @projection <> (@{entity}.apply _, @{entity}.unapply _)
   //def autoInc = id.? ~ @projection <> (@{entity}.apply _, @{entity}.unapply _) returning id 
-  
-  //def supplier = foreignKey("SUP_FK", supID, Suppliers)(_.id)
 
   def findAll(filter: String = "%") = {
     for {
@@ -43,13 +41,6 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
       // if (entity.name like ("%" + filter))
     } yield entity
   }
-
- //def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%") = {
- //   val members = ru.typeOf[@{entity}].members.filter(m => m.isTerm && !m.isMethod).toList
- //   val fields = members.map(_.name).reverse.zipWithIndex
- //   println("Fields of @{entity}: " + fields) // TODO: find a smart way to sort by a field in the next line.
- //   findAll(filter).sortBy(_.@primarykey.name).drop(page * pageSize).take(pageSize)
- // }
 
   def findByPK(pk: @primarykey.propertyType) =
     for (entity <- @camelify(table.toLowerCase) if entity.@primarykey.name === pk) yield entity
@@ -75,12 +66,6 @@ object @camelify(table.toLowerCase) extends Table[@{entity}]("@{table}") {
       @for(property <- properties) {
       case "@{property.name}" => ru.typeOf[@{camelify(table.toLowerCase)}.type].declaration(ru.newTermName("@{property.name}")).asMethod
       }
-      //case "street" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("street")).asMethod
-      //case "city" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("city")).asMethod
-      //case "state" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("state")).asMethod
-      //case "zipCode" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("zipCode")).asMethod
-      //case "name" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("name")).asMethod
-      //case "id" => ru.typeOf[Suppliers.type].declaration(ru.newTermName("id")).asMethod
     }
 
     findAll().sortBy { x =>    

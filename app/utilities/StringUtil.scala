@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Thomas Alexandre
+ * Copyright (C) 2012-2013 Thomas Alexandre
  */
 package utilities
 
