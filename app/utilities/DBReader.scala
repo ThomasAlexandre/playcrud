@@ -36,10 +36,10 @@ case class TableProperty(
 class DBReader(val config: Config) extends Logged {
 
   // Load the driver
-  val driver = classOf[com.mysql.jdbc.Driver]
-  val h2Driver = classOf[org.h2.Driver]
-  val postgreSQLDriver = classOf[org.postgresql.Driver]
-
+  val postgresqldriver = classOf[org.postgresql.Driver].newInstance()
+  val mySqldriver = classOf[com.mysql.jdbc.Driver].newInstance()
+  val h2Driver = classOf[org.h2.Driver].newInstance()
+  
   // Setup the connection
   val conn = DriverManager.getConnection(config.dburl, config.username, config.password)
   val metadata = conn.getMetaData()
