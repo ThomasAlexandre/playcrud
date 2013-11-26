@@ -4,11 +4,11 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-
 import views._
 import utilities._
 import StringUtil._
 import java.io.{ File, FileWriter }
+import scala.io.Source
 
 object Application extends Controller {
   
@@ -127,14 +127,30 @@ object Application extends Controller {
           Logger.info("Total Number of Artifacts: "+artifacts.size)
            
           // Filter out tables with no primary key (for now)
-          val filteredArtifacts = artifacts filterNot(a=>a._2.find(p=>p.isPrimaryKey).isEmpty)
+          val filteredPKArtifacts = artifacts filterNot(a=>a._2.find(p=>p.isPrimaryKey).isEmpty)
           
-          Logger.info("Number of Filtered Artifacts (artifacts with a primary key): "+filteredArtifacts.size)
+          Logger.info("Number of Filtered Artifacts (artifacts with a primary key): "+filteredPKArtifacts.size)
+          Logger.info("Table names: "+filteredPKArtifacts.toList.map(x => x._1))
+          
+          // If 'tables' file exists, take only artifacts present in the list
+          // Otherwise generate all artifacts
+          val partialSetFile = new File("conf/tables") // Should be in config
+          val filteredArtifacts =
+            if(!partialSetFile.exists) filteredPKArtifacts
+            else {
+              val tables = Source.fromFile(partialSetFile).getLines().toList.map(_.toUpperCase).toSet
+              filteredPKArtifacts filter{a => 
+                println("Table: "+a._1)
+                tables.contains(a._1)
+              }
+            }
+          
+          Logger.info("Number of Filtered Artifacts to generate: "+filteredArtifacts.size)
+          
           
           // Exporting db testdata to test/resources
           // The testdata is sorted so that foreign key dependencies are resolved
           val testdata = dbReader.saveTestData(testDataFilepath,filteredArtifacts.map(_._1).toArray)
-          
           Logger.info("testdata: " + testdata)
           
           // Generate pages concerning the whole application

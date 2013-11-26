@@ -13,6 +13,7 @@ import scala.annotation.tailrec
 object DBUtil extends Logged {
 
   def getConnection(configuration: Config) = {
+    log("Loading driver with configuration: "+configuration)
     Class.forName(configuration.driver).newInstance
     DriverManager.getConnection(configuration.dburl, configuration.username, configuration.password)
   }
@@ -48,7 +49,7 @@ object DBUtil extends Logged {
   // TODO: Make the mapping depending on Config (i.e. Database Type)
   // def mapping(configuration: Config)(propertyType: String): String = {
   def mapping(propertyType: String): String = {
-    propertyType match {
+    propertyType.toUpperCase.trim match {
       case "BIT" => "Boolean" // find right type
       case "BIGINT" => "Long"
       case "CHAR" | "LONGVARCHAR" | "VARCHAR" => "String"
@@ -69,11 +70,21 @@ object DBUtil extends Logged {
       case "bool" => "Boolean"
       case "varchar" => "String"
       case "timestamp" => "Date"
+      // added for customization
+      case "SERIAL" | "BPCHAR" | "TEXT" => "String" // find right type
+      case "INT8" => "Long" // find right type
+      case "INT4" => "Int" // find right type
+      case "INT2" => "Int" // find right type
+      case "BOOL" => "Boolean"
+      case "BYTEA" => "String"
+      case "TIMESTAMPTZ" => "Date"
+      case "FLOAT4" => "Double"
       case _ => val message = "No mapping for: " + propertyType; log(message); message
     }
   }
 
   def formMapping(property: TableProperty): String = {
+
     val int8 = new java.lang.String("int8")
     val mapping = property.propertyType.trim match {
       case ("Date" | "Timestamp" | "DATETIME") => "sqlDate(\"yyyy-MM-dd\")"
@@ -82,6 +93,7 @@ object DBUtil extends Logged {
       case "Int" => "number"
       case "Boolean" => "boolean"
       case int8 => "longNumber"
+      case _ => "number"
     }
     if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
     else mapping
