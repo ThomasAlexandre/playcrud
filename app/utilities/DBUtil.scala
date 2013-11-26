@@ -64,17 +64,24 @@ object DBUtil extends Logged {
       case "TIME" => "Time" // find right type (java.sql.Time)
       case "TIMESTAMP" => "Date" // find right type (java.sql.Timestamp)
       case "TINYINT" => "Byte" // find right type
+      case "int4" => "Int"
+      case "int8" => "Long" 
+      case "bool" => "Boolean"
+      case "varchar" => "String"
+      case "timestamp" => "Date"
       case _ => val message = "No mapping for: " + propertyType; log(message); message
     }
   }
 
   def formMapping(property: TableProperty): String = {
-    val mapping = property.propertyType match {
+    val int8 = new java.lang.String("int8")
+    val mapping = property.propertyType.trim match {
       case ("Date" | "Timestamp" | "DATETIME") => "sqlDate(\"yyyy-MM-dd\")"
       case "String" => "nonEmptyText"
       case "Long" => "longNumber"
       case "Int" => "number"
       case "Boolean" => "boolean"
+      case int8 => "longNumber"
     }
     if (property.isPrimaryKey || property.nullable) "optional(%s)".format(mapping)
     else mapping

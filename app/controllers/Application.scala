@@ -149,7 +149,7 @@ object Application extends Controller {
             "/app/views/twitterBootstrapInput.scala.html" -> txt.twitterBootstrapInput(tablenames.toList).toString,
             "/app/views/main.scala.html" -> txt.main(tablenames.toList).toString,
             "/app/views/controllerlist.scala.html" -> txt.controllerlist(filteredArtifacts.toList).toString,
-            "/project/Build.scala" -> txt.build(tablenames.toList,config.baseDirectory).toString,
+            "/build.sbt" -> txt.build(tablenames.toList,config.baseDirectory).toString,
             "/project/plugins.sbt" -> txt.plugins(tablenames.toList).toString,
             "/public/stylesheets/bootstrap.min.css" -> txt.bootstrapmincss(tablenames.toList).toString,
             "/public/stylesheets/main.css" -> txt.maincss(tablenames.toList).toString)
